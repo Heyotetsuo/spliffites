@@ -46,20 +46,25 @@ function canvasAction( callback ){
 	C2.restore();
 }
 function addClump(){
-	var x, y, ax, ay, bx, by, cx, cy, i;
-	var n=8, sz=40, spkSZ=40;
+	var ax, ay, bx, by, cx, cy, i;
+	var n=8, sz=40, spkSZ=2;
+	var x = 400 + sin( (0/n)*PI*2 )*sz;
+	var y = 400 + cos( (0/n)*PI*2 )*sz;
 	C.beginPath();
-	for( i=0; i<=n; i++ ){
+	C.moveTo( x, y );
+	for( i=1; i<=n; i++ ){
 		cx = 400 + sin( (i/n)*PI*2 )*sz;
 		cy = 400 + cos( (i/n)*PI*2 )*sz;
-		ax = x + rnd()*spkSZ-spkSZ/2;
-		ay = y + rnd()*spkSZ-spkSZ/2;
-		bx = cx + rnd()*spkSZ-spkSZ/2;
-		by = cy + rnd()*spkSZ-spkSZ/2;
-		C.moveTo( x, y );
+		ax = x + (x-400) * rnd();
+		ay = y + (y-400) * rnd();
+		bx = cx + (cx-400) * rnd();
+		by = cy + (cy-400) * rnd();
 		C.bezierCurveTo( ax, ay, bx, by, cx, cy );
 		x = cx, y = cy;
 	}
+	C.closePath();
+	C.fillStyle = "#cef";
+	C.fill();
 	C.lineWidth = 2;
 	C.strokeStyle = "#08f";
 	C.stroke();
