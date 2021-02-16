@@ -45,24 +45,23 @@ function canvasAction( callback ){
 	C.restore()
 	C2.restore();
 }
-function addClump(){
-	var ax, ay, bx, by, cx, cy, i;
-	var n=8, sz=40, spkSZ=2;
-	var x = 400 + sin( (0/n)*PI*2 )*sz;
-	var y = 400 + cos( (0/n)*PI*2 )*sz;
+function addClump(x, y, s){
+	var px, py, ax, ay, bx, by, cx, cy, i;
+	var n=8, sz=40*s, spkSZ=2;
+	px = x + sin( (0/n)*PI*2 )*sz;
+	py = y + cos( (0/n)*PI*2 )*sz;
 	C.beginPath();
-	C.moveTo( x, y );
+	C.moveTo( px, py );
 	for( i=1; i<=n; i++ ){
-		cx = 400 + sin( (i/n)*PI*2 )*sz;
-		cy = 400 + cos( (i/n)*PI*2 )*sz;
-		ax = x + (x-400) * rnd();
-		ay = y + (y-400) * rnd();
-		bx = cx + (cx-400) * rnd();
-		by = cy + (cy-400) * rnd();
+		cx = x + sin( (i/n)*PI*2 )*sz;
+		cy = y + cos( (i/n)*PI*2 )*sz;
+		ax = px + (px-x) * rnd();
+		ay = py + (py-y) * rnd();
+		bx = cx + (cx-x) * rnd();
+		by = cy + (cy-y) * rnd();
 		C.bezierCurveTo( ax, ay, bx, by, cx, cy );
-		x = cx, y = cy;
+		px = cx, py = cy;
 	}
-	C.closePath();
 	C.fillStyle = "#cef";
 	C.fill();
 	C.lineWidth = 2;
@@ -124,7 +123,12 @@ function init(){
 	getNums();
 }
 function render(){
-	addClump();
+	var x, y, i;
+	for ( i=0; i<100; i++ ){
+		x = 400 + rnd()*400-200;
+		y = 400 + rnd()*200-100;
+		addClump( x, y, (rnd()/2)+0.5 );
+	}
 }
 function main(){
 	init();
