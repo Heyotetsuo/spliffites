@@ -1,41 +1,27 @@
-var doc=document,win=window,SZ,nums,temp;
-var abs=Math.abs,rnd=Math.random,round=Math.round,max=Math.max,min=Math.min;
-var ceil=Math.ceil,floor=Math.floor,sin=Math.sin,cos=Math.cos,PI=Math.PI;
+var doc=document,win=window,SZ,seed;
+var abs=Math.abs,round=Math.round,max=Math.max,min=Math.min,pow=Math.pow;
+var ceil=Math.ceil,floor=Math.floor,sqrt=Math.sqrt;
+var sin=Math.sin,cos=Math.cos,PI=Math.PI;
 var CVS=doc.querySelector("#comp1"),CVS2=doc.querySelector("#comp2");
 var C=CVS.getContext("2d"),C2=CVS2.getContext("2d");
+function handleKeyPress(){}
 function normInt(s){ return parseInt(s,32)-SZ }
 function d2r(n){ return n*PI/180 }
 function to1(n){ return n/255 };
 function to1N(n){ return n/128-1 };
 function clear( C ){ C.clearRect(0,0,SZ,SZ) }
-function getNums2(){
-	var hashSingles=[],seed,rvs,i=0;
-	seed = parseInt( tokenData.hash.slice(0,16), 16 );
-	for(i=0;i<64;i++) hashPairs.push(tokenData.hash.charAt(i));
-	rvs = hashPairs.map(n=>parseInt(n,16));
-	return rvs;
+function rand(){
+	seed ^= seed << 13;
+	seed ^= seed >> 17;
+	seed ^= seed << 5;
+	return ( (seed<0?~seed+1:seed)%1024) / 1024;
 }
-function getNums(){
-	var hashPairs=[],seed,rvs,i=0;
-	seed = parseInt( tokenData.hash.slice(0,16), 16 );
-	for(i=0;i<32;i++){
-		hashPairs.push(
-			tokenData.hash.slice( 2+(i*2),4+(i*2) )
-		);
+function printf( s, a ){
+	var newS = s, i;
+	for(i=0;i<a.length;i++){
+		newS = newS.replace( "%s", a[i] );
 	}
-	rvs = hashPairs.map(n=>parseInt(n,16));
-	return rvs;
-}
-function xhrIsReady( xhr ){ return xhr.readyState === 4 && xhr.status === 200; }
-function xhrPOST( url, callback ){
-	var xhr = new XMLHttpRequest();
-	xhr.onreadystatechange = function(){
-		if ( xhrIsReady(xhr) ){
-			callback( xhr.response );
-		}
-	}
-	xhr.open( "POST", url );
-	xhr.send();
+	return newS;
 }
 function canvasAction( callback ){
 	C.save();
@@ -45,7 +31,8 @@ function canvasAction( callback ){
 	C.restore()
 	C2.restore();
 }
-function addClump(x, y, s){
+function addClump( args ){
+	var x=args[0], y=args[1], s=args[2];
 	var px, py, ax, ay, bx, by, cx, cy, i;
 	var n=8, sz=40*s, spkSZ=2;
 	px = x + sin( (0/n)*PI*2 )*sz;
@@ -55,10 +42,10 @@ function addClump(x, y, s){
 	for( i=1; i<=n; i++ ){
 		cx = x + sin( (i/n)*PI*2 )*sz;
 		cy = y + cos( (i/n)*PI*2 )*sz;
-		ax = px + (px-x) * rnd();
-		ay = py + (py-y) * rnd();
-		bx = cx + (cx-x) * rnd();
-		by = cy + (cy-y) * rnd();
+		ax = px + (px-x) * rand();
+		ay = py + (py-y) * rand();
+		bx = cx + (cx-x) * rand();
+		by = cy + (cy-y) * rand();
 		C.bezierCurveTo( ax, ay, bx, by, cx, cy );
 		px = cx, py = cy;
 	}
@@ -117,18 +104,40 @@ function transWithAnchor( x, y, C, callback ){
 	callback( [].slice.call(arguments,3) );
 	C.translate( x*-1, y*-1 );
 }
-function init(){
-	CVS.width = 800;
-	CVS.height = 800;
-	getNums();
+function getPointInCircle( r, ang, rat ){
+	var x = cos(ang)*r;
+	var y = sin(ang)*r;
+	return [
+		SZ/2 + x,
+		SZ/2 + (y*rat - y/2)
+	];
+}
+function drawBG(){
+	var grad = C.createRadialGradient( SZ/2, SZ/2, 1, 0, 0, SZ );
+	grad.addColorStop( 0, "#eee" );
+	grad.addColorStop( 1, "#ddd" );
+	C.fillStyle = grad;
+	C.fillRect( 0, 0, SZ, SZ );
 }
 function render(){
-	var x, y, i;
-	for ( i=0; i<100; i++ ){
-		x = 400 + rnd()*400-200;
-		y = 400 + rnd()*200-100;
-		addClump( x, y, (rnd()/2)+0.5 );
+	var x, y, i, max, n=300, p=[];
+	var w = rand()*(SZ*0.2)+SZ*0.2;
+	var h = rand()*(SZ*0.2)+SZ*0.3;
+	canvasAction( drawBG );
+	for ( i=0; i<n/8; i++ ){
+		p = getPointInCircle( w/2-(w/2)*(i/(n/8)), rand()*2*PI, h/w );
+		canvasAction( addClump, p[0], p[1], (rand()/2)+0.5 );
 	}
+	for ( i=0; i<n; i++ ){
+		p = getPointInCircle( w-w*(i/n*0.8), rand()*2*PI, h/w );
+		canvasAction( addClump, p[0], p[1], (rand()/2)+0.5 );
+	}
+}
+function init(){
+	SZ = 800;
+	CVS.width = SZ;
+	CVS.height = SZ;
+	seed = parseInt( tokenData.hash.slice(0,18) );
 }
 function main(){
 	init();
