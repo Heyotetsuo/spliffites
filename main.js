@@ -135,6 +135,7 @@ function drawClump(s, o, C){
 		addShadow( C );
 		paintShape( DATA.clump, C );
 		C.globalCompositeOperation = "multiply";
+		C.strokeStyle = "#bbb";
 		C.stroke();
 	});
 }
