@@ -148,6 +148,39 @@ function drawClump(s, o, C){
 		C.stroke();
 	});
 }
+function renderGrad( pArr, rArr, idxArr, cArr, C ){
+	var x1=pArr[0][0], y1=pArr[0][1];
+	var x2=pArr[1][0], y2=pArr[1][1];
+	var r1=rArr[0], r2=rArr[1];
+	var grad,r,i;
+	grad = C.createRadialGradient( x1, y1, r1, x2, y2, r2 );
+	for(i=0;i<idxArr.length;i++){
+		grad.addColorStop( idxArr[i], cArr[i] );
+	}
+	C.fillStyle = grad;
+	C.fill();
+}
+function drawSunglasses(){
+	var x1,x2,y,r,grad;
+	C.lineWidth = SZ*0.025;
+	C.strokeStyle = "#444444";
+	x1 = SZ/2-SZ*0.08;
+	x2 = SZ/2+SZ*0.08;
+	y = SZ*0.4;
+	r = SZ*0.06;
+	C.beginPath();
+	C.arc( x1, y, r, 0, 2*PI);
+	renderGrad( [[x1,y],[x1,y]], [0,r], [0,1], ["#fff","#fff844"], C );
+	C.stroke();
+	C.beginPath();
+	C.arc( x2, y, r, 0, 2*PI);
+	renderGrad( [[x2,y],[x2,y]], [0,r], [0,1], ["#fff","#fff844"], C );
+	C.stroke();
+	C.beginPath();
+	C.moveTo( x1+r, y );
+	C.lineTo( x2-r, y );
+	C.stroke();
+}
 function render(){
 	var x, y, i, p=[];
 	var w = DATA.nugWidth, h = DATA.nugHeight;
@@ -159,6 +192,7 @@ function render(){
 		p = getPointInCircle( urand()*w, urand()*2*PI, h/w );
 		drawClump( [1,1], p, C );
 	}
+	if (rand()>0) drawSunglasses();
 }
 function initData(){
 	DATA = {
