@@ -151,25 +151,25 @@ function render(){
 }
 function initData(){
 	DATA = {
-		clumpSZ: floor( urand()*0.025*SZ ) + 0.0125*SZ,
+		clumpSZ: floor( urand()*0.025*SZ ) + 0.03*SZ,
 		nugWidth: urand()*(SZ*0.2)+SZ*0.2,
 		nugHeight: urand()*(SZ*0.2)+SZ*0.3,
 		colors: {
 			common:[
-				"#dd7fff", "#e8a7ff", "#f0c5ff",
-				"#e1ff26", "#eaff68", "#fdffa4",
-				"#ff1ab1", "#ff3ebd", "#ff85d5"
+				"#dd7fff","#e8a7ff","#f0c5ff",
+				"#e1ff26","#eaff68","#fdffa4",
+				"#ff1ab1","#ff3ebd","#ff85d5"
 			],
 			uncommon:[
-				"#ff1313", "#ff4545", "#ff8383",
-				"#50ea38", "#6bff53", "#92ff81",
-				"#17ccf3", "#3adcff", "#98edff"
+				"#ff1313","#ff4545","#ff8383",
+				"#50ea38","#6bff53","#92ff81",
+				"#17ccf3","#3adcff","#98edff"
 			],
 			rare:[
-				"#c1640d", "#d78d48", "#d6ab84",
-				"#dddddd", "#ececec", "#f0f0f0"
+				"#c1640d","#d78d48","#d6ab84",
+				"#dddddd","#ececec","#f0f0f0"
 			],
-			mythic:[ "#febc14", "#fdcc4e", "#ffdc83" ]
+			mythic:["#febc14","#fdcc4e","#ffdc83"]
 		}
 	};
 	DATA.clump = makeClump( DATA.clumpSZ );
