@@ -111,15 +111,16 @@ function addShape(shape,s,o,C){
 function paintShape(shape, C){
 	C.fillStyle = shape.fill;
 	C.fill();
+	setShadow( false, C );
 	C.lineWidth = shape.stroke.w;
 	C.strokeStyle = shape.stroke.style;
 	C.stroke();
 }
-function addShadow( C ){
+function setShadow( mode, C ){
 	C.shadowOffsetX = 0;
-	C.shadowOffsetY = 0.00625*SZ;
-	C.shadowBlur = 0.0125*SZ;
-	C.shadowColor = "#00000040";
+	C.shadowOffsetY = (mode?0.00625*SZ:0);
+	C.shadowBlur = (mode?0.0125*SZ:0);
+	C.shadowColor = (mode?"#00000040":"#00000000");
 }
 function canvasAction( C, callback ){
 	C.save();
@@ -131,10 +132,18 @@ function drawClump(s, o, C){
 	canvasAction( C, ()=>{
 		C.translate( o[0], o[1] );
 		C.rotate( randuint()%360*PI/180 );
-		addShape( DATA.clump.shape, [1,1], [0,0], C );
-		addShadow( C );
+		addShape( DATA.clump.shape, s, [0,0], C );
+		setShadow( true, C );
 		paintShape( DATA.clump, C );
+		var grad = C.createRadialGradient(
+			0, 0, 0,
+			0, 0, DATA.clumpRad
+		);
 		C.globalCompositeOperation = "multiply";
+		grad.addColorStop(0,"#fff");
+		grad.addColorStop(1,"#bbb");
+		C.fillStyle = grad;
+		C.fill();
 		C.strokeStyle = "#bbb";
 		C.stroke();
 	});
