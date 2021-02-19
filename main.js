@@ -49,8 +49,7 @@ function makeClump( s ){
 	}
 	clrs = DATA.colors.common;
 	obj.fill = clrs[ randuint()%clrs.length ];
-	if ( obj.fill === undefined) debugger;
-	obj.stroke = { w: 2, style: "#000" }
+	obj.stroke = { w: 2, style: obj.fill }
 	return obj;
 }
 function renderLayer(layer,s,o,C){
@@ -135,6 +134,8 @@ function drawClump(s, o, C){
 		addShape( DATA.clump.shape, [1,1], [0,0], C );
 		addShadow( C );
 		paintShape( DATA.clump, C );
+		C.globalCompositeOperation = "multiply";
+		C.stroke();
 	});
 }
 function render(){
